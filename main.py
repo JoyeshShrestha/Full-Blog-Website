@@ -8,10 +8,13 @@ from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship
+import smtplib
 # Import your forms from the forms.py
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 
-
+import os
+from dotenv import load_dotenv
+load_dotenv()
 '''
 Make sure the required packages are installed: 
 Open the Terminal in PyCharm (bottom left). 
@@ -24,9 +27,11 @@ pip3 install -r requirements.txt
 
 This will install the packages from the requirements.txt for this project.
 '''
+password = os.environ["email_password"] 
+my_email = os.environ["email"]
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 
@@ -34,7 +39,7 @@ Bootstrap5(app)
 
 
 # CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
 db = SQLAlchemy()
 db.init_app(app)
 
@@ -248,9 +253,36 @@ def delete_post(post_id):
 def about():
     return render_template("about.html")
 
+def send_email(name,email,phone,message):
+        try:
+            connection =smtplib.SMTP("smtp.gmail.com", port=587)
 
-@app.route("/contact")
+            connection.starttls()
+            connection.login(user=my_email,password=password)
+            connection.sendmail(
+                from_addr = my_email, 
+                to_addrs=my_email, 
+                msg=f"Subject: {name} sends you email from website\n\nname: {name}\nemail: {email}\nphone number: {phone}\nmessage: {message}\nRegards, {name} ")
+            connection.close()
+            
+        except:
+            return False  
+        else:
+            return True 
+@app.route('/contact',methods = ["GET","POST"])
 def contact():
+    if request.method == "GET":
+
+        return render_template('contact.html')
+    elif request.method=="POST":
+        name = request.form['name']
+        email = request.form['email']
+        phone = request.form['phone']
+        message = request.form['message']
+        if send_email(name,email,phone,message):
+            return f"Successfully sent"
+        else:
+            return f"Error while sending email"
     return render_template("contact.html")
 
 
