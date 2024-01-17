@@ -13,8 +13,8 @@ import smtplib
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 
 import os
-from dotenv import load_dotenv
-load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv()
 '''
 Make sure the required packages are installed: 
 Open the Terminal in PyCharm (bottom left). 
@@ -27,8 +27,8 @@ pip3 install -r requirements.txt
 
 This will install the packages from the requirements.txt for this project.
 '''
-password = os.environ["email_password"] 
-my_email = os.environ["email"]
+password = os.environ.get("email_password") 
+my_email = os.environ.get("email")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
