@@ -294,7 +294,9 @@ def add_security_headers(response):
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
 
     # Content Security Policy
-    response.headers['Content-Security-Policy'] = "default-src 'self'"
+    response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self' data: /static/; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+
+
 
     # X-Frame-Options
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
