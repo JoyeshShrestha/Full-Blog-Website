@@ -45,6 +45,8 @@ db.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return db.get_or_404(User, user_id)
@@ -284,6 +286,32 @@ def contact():
         else:
             return f"Error while sending email"
     return render_template("contact.html")
+
+
+
+def add_security_headers(response):
+    # HTTP Strict Transport Security
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+
+    # Content Security Policy
+    response.headers['Content-Security-Policy'] = "default-src 'self'"
+
+    # X-Frame-Options
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+
+    # X-Content-Type-Options
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+
+    # Referrer Policy
+    response.headers['Referrer-Policy'] = 'no-referrer'
+
+    # Permissions Policy
+    response.headers['Permissions-Policy'] = 'geolocation=(), midi=(), sync-xhr=()'
+
+    return response
+
+# Apply the security headers to all responses using the after_request decorator
+app.after_request(add_security_headers)
 
 
 if __name__ == "__main__":
