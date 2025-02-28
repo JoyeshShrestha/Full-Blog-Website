@@ -10766,7 +10766,10 @@ header.masthead .post-heading .meta a {
   padding: 0.625rem;
   text-align: center;
 }
-
+.logo .bg-logo{
+  font-size: 5rem;
+  z-index: -1;
+}
 .post-preview > a {
   color: #212529;
 }
